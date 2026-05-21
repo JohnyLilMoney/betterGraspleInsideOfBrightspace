@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Brightspace Grasple Layout",
+  "version": "1.10.8",
+  "description": "Splits Brightspace Grasple content pages into 3 resizable columns: navigation, Grasple exercise, and Activity Details.",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.brightspace.com/*viewContent*",
+        "*://*.tudelft.nl/*viewContent*",
+        "*://*.brightspace.com/*viewcontent*",
+        "*://*.tudelft.nl/*viewcontent*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}
