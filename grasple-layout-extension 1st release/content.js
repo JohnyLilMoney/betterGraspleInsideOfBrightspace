@@ -67,67 +67,66 @@
       nav.appendChild(ul);
     }
 
-  // ── Bottom Section: Clean Icon Grid + Profile ──
-  const headerRight = document.querySelector('.d2l-labs-navigation-header-right');
+    // ── Bottom Section: Clean Icon Grid + Profile ──
+    const headerRight = document.querySelector('.d2l-labs-navigation-header-right');
 
-  if (headerRight) {
-    const bottomSection = document.createElement('div');
-    bottomSection.id = 'grasple-vnav-bottom-section';
+    if (headerRight) {
+      const bottomSection = document.createElement('div');
+      bottomSection.id = 'grasple-vnav-bottom-section';
 
-    const iconGroup = document.createElement('div');
-    iconGroup.id = 'grasple-icon-group';
+      const iconGroup = document.createElement('div');
+      iconGroup.id = 'grasple-icon-group';
 
-    // helper
-    const addIcon = el => {
-      if (!el) return;
+      // helper
+      const addIcon = el => {
+        if (!el) return;
 
-      const wrap = document.createElement('div');
-      wrap.className = 'grasple-icon-item';
+        const wrap = document.createElement('div');
+        wrap.className = 'grasple-icon-item';
 
-      wrap.appendChild(el);
-      iconGroup.appendChild(wrap);
-    };
+        wrap.appendChild(el);
+        iconGroup.appendChild(wrap);
+      };
 
-    // 1. Course selector icon
-    const courseIcon = headerRight.querySelector(
-      '.d2l-navigation-s-course-menu d2l-labs-navigation-dropdown-button-icon'
-    );
-    addIcon(courseIcon);
+      // 1. Course selector icon
+      const courseIcon = headerRight.querySelector(
+        '.d2l-navigation-s-course-menu d2l-labs-navigation-dropdown-button-icon'
+      );
+      addIcon(courseIcon);
 
-    // 2. Notification icons (3 separate icons)
-    const notificationIcons = headerRight.querySelectorAll(
-      '.d2l-navigation-s-notification d2l-labs-navigation-dropdown-button-icon'
-    );
+      // 2. Notification icons (3 separate icons)
+      const notificationIcons = headerRight.querySelectorAll(
+        '.d2l-navigation-s-notification d2l-labs-navigation-dropdown-button-icon'
+      );
 
-    notificationIcons.forEach(addIcon);
+      notificationIcons.forEach(addIcon);
 
-    // 3. Admin gear icon
-    const adminIcon = headerRight.querySelector(
-      '.d2l-navigation-s-admin-menu d2l-labs-navigation-dropdown-button-icon'
-    );
-    addIcon(adminIcon);
+      // 3. Admin gear icon
+      const adminIcon = headerRight.querySelector(
+        '.d2l-navigation-s-admin-menu d2l-labs-navigation-dropdown-button-icon'
+      );
+      addIcon(adminIcon);
 
-    // PROFILE
-    const personalMenu = headerRight.querySelector(
-      '.d2l-navigation-s-personal-menu'
-    );
+      // PROFILE
+      const personalMenu = headerRight.querySelector(
+        '.d2l-navigation-s-personal-menu'
+      );
 
-    if (iconGroup.children.length) {
-      bottomSection.appendChild(iconGroup);
+      if (iconGroup.children.length) {
+        bottomSection.appendChild(iconGroup);
+      }
+
+      if (personalMenu) {
+        const profileWrap = document.createElement('div');
+        profileWrap.id = 'grasple-profile-wrap';
+
+        profileWrap.appendChild(personalMenu);
+
+        bottomSection.appendChild(profileWrap);
+      }
+
+      nav.appendChild(bottomSection);
     }
-
-    if (personalMenu) {
-      const profileWrap = document.createElement('div');
-      profileWrap.id = 'grasple-profile-wrap';
-
-      profileWrap.appendChild(personalMenu);
-
-      bottomSection.appendChild(profileWrap);
-    }
-
-    nav.appendChild(bottomSection);
-  }
-
     return nav;
   }
 
@@ -223,6 +222,7 @@
 
     setupDividerDrag();
     setupIframeObserver();
+    loadSavedLayout();
   }
 
   function forceLTIHeight() {
@@ -280,6 +280,31 @@
   waitForLTILaunch();
   setInterval(forceLTIHeight, 1000);
 
+  // ── Helper functions for column sizing ──
+  function setFixed(col, px) {
+    col.style.setProperty('flex', `0 0 ${px}px`, 'important');
+    col.style.setProperty('width', `${px}px`, 'important');
+  }
+
+  function setFlexible(col) {
+    col.style.setProperty('flex', '1 1 0', 'important');
+    col.style.setProperty('width', '', 'important');
+    col.style.removeProperty('width');
+  }
+
+  function fixIframeSize() {
+    const colMid = document.getElementById('grasple-col-mid');
+    if (!colMid) return;
+    const host = colMid.querySelector('d2l-lti-launch');
+    if (!host || !host.shadowRoot) return;
+    const iframe = host.shadowRoot.querySelector('iframe');
+    if (iframe) {
+      const midHeight = colMid.getBoundingClientRect().height;
+      iframe.style.setProperty('height', `${midHeight}px`, 'important');
+      iframe.style.setProperty('min-height', `${midHeight}px`, 'important');
+    }
+  }
+
   function setupIframeObserver() {
     const colMid = document.getElementById('grasple-col-mid');
     if (!colMid) return;
@@ -309,40 +334,14 @@
 
   function setupDividerDrag() {
     const wrapper  = document.getElementById('grasple-layout-wrapper');
-    const colLeft  = document.getElementById('grasple-col-left');
-    const colMid   = document.getElementById('grasple-col-mid');
-    const colRight = document.getElementById('grasple-col-right');
+    window.colLeft  = document.getElementById('grasple-col-left');
+    window.colMid   = document.getElementById('grasple-col-mid');
+    window.colRight = document.getElementById('grasple-col-right');
     if (!wrapper) return;
 
-    // Minimum widths to avoid total collapse
     const MIN_LEFT  = 60;
     const MIN_RIGHT = 100;
     const MIN_MID   = 100;
-
-    // Helper: turn a column into a fixed‑width one
-    function setFixed(col, px) {
-      col.style.setProperty('flex', `0 0 ${px}px`, 'important');
-      col.style.setProperty('width', `${px}px`, 'important');
-    }
-
-    // Helper: make a column flexible and remove any explicit width
-    function setFlexible(col) {
-      col.style.setProperty('flex', '1 1 0', 'important');
-      col.style.setProperty('width', '', 'important');  // clear inline width
-      col.style.removeProperty('width');                // belt & suspenders
-    }
-
-    // Helper: re‑calculate iframe size after a drag
-    function fixIframeSize() {
-      const host = document.querySelector('#grasple-col-mid d2l-lti-launch');
-      if (!host || !host.shadowRoot) return;
-      const iframe = host.shadowRoot.querySelector('iframe');
-      if (iframe) {
-        const midHeight = colMid.getBoundingClientRect().height;
-        iframe.style.setProperty('height', `${midHeight}px`, 'important');
-        iframe.style.setProperty('min-height', `${midHeight}px`, 'important');
-      }
-    }
 
     document.querySelectorAll('.grasple-divider').forEach(divider => {
       let startX, sL, sM, sR;
@@ -362,20 +361,18 @@
         const dx = e.clientX - startX;
 
         if (divider.dataset.divider === '1') {
-          // Divider between left and middle
           const newL = Math.max(MIN_LEFT, sL + dx);
-          const remaining = sL + sM - newL;   // what would be left for middle
+          const remaining = sL + sM - newL;
           if (remaining >= MIN_MID) {
             setFixed(colLeft, newL);
-            setFlexible(colMid);              // middle fills the rest
+            setFlexible(colMid);
             fixIframeSize();
           }
         } else {
-          // Divider between middle and right
           const newR = Math.max(MIN_RIGHT, sR - dx);
-          const remaining = sM + sR - newR;   // what would be left for middle
+          const remaining = sM + sR - newR;
           if (remaining >= MIN_MID) {
-            setFlexible(colMid);              // middle flexible
+            setFlexible(colMid);
             setFixed(colRight, newR);
             fixIframeSize();
           }
@@ -385,28 +382,58 @@
       divider.addEventListener('pointerup', e => {
         divider.releasePointerCapture(e.pointerId);
         divider.classList.remove('dragging');
+
+        // Save both side widths to Chrome storage
+        chrome.storage.local.set({
+          grasple_left_width: colLeft.getBoundingClientRect().width,
+          grasple_right_width: colRight.getBoundingClientRect().width
+        });
       });
     });
   }
 
-  function killBrightspaceIframeHeights() {
-  const iframes = document.querySelectorAll('#grasple-col-mid iframe');
+  function loadSavedLayout() {
+    const colLeft  = document.getElementById('grasple-col-left');
+    const colMid   = document.getElementById('grasple-col-mid');
+    const colRight = document.getElementById('grasple-col-right');
+    if (!colLeft || !colMid || !colRight) return;
 
-  iframes.forEach(iframe => {
-    iframe.removeAttribute('height');
-    iframe.style.height = '100%';
-    iframe.style.minHeight = '0px';
-    iframe.style.maxHeight = 'none';
-  });
+    chrome.storage.local.get(['grasple_left_width', 'grasple_right_width'], (result) => {
+      if (result.grasple_left_width) {
+        setFixed(colLeft, result.grasple_left_width);
+      }
+      if (result.grasple_right_width) {
+        setFixed(colRight, result.grasple_right_width);
+      }
+      // Always keep the middle column flexible
+      setFlexible(colMid);
 
-  const lti = document.querySelector('d2l-lti-launch');
-  if (lti) {
-    lti.removeAttribute('style'); // IMPORTANT: Brightspace often injects inline height here
-    lti.style.height = '100%';
-    lti.style.display = 'flex';
-    lti.style.flex = '1 1 auto';
+      // Delay to let the flexbox settle, then fix the iframe height
+      setTimeout(() => {
+        fixIframeSize();
+      }, 100);
+    });
   }
-}
+
+
+  function killBrightspaceIframeHeights() {
+    const iframes = document.querySelectorAll('#grasple-col-mid iframe');
+
+    iframes.forEach(iframe => {
+      iframe.removeAttribute('height');
+      iframe.style.height = '100%';
+      iframe.style.minHeight = '0px';
+      iframe.style.maxHeight = 'none';
+    });
+
+    const lti = document.querySelector('d2l-lti-launch');
+    if (lti) {
+      lti.removeAttribute('style'); // IMPORTANT: Brightspace often injects inline height here
+      lti.style.height = '100%';
+      lti.style.display = 'flex';
+      lti.style.flex = '1 1 auto';
+    }
+  }
 
   function waitAndApply() {
     const ready = () =>
