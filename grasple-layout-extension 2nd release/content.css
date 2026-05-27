@@ -224,6 +224,100 @@ header,
   margin-right: 0 !important;
 }
 
+/* Kill the 1px overflow and white line at the top of the middle column */
+#grasple-col-mid .d2l-fileviewer,
+#grasple-col-mid .d2l-fileviewer-pdf-pdfjs,
+#grasple-col-mid .d2l-fileviewer-rendered-pdf {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+}
+
+/* Remove any default body margins inside the iframe's document */
+#grasple-col-mid #ContentView {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+/* ── Dark mode for right column buttons ── */
+
+/* Download & Print buttons */
+#grasple-col-right button.d2l-button,
+#grasple-col-right .d2l-button {
+  background: #22262e !important;
+  color: #c2c9d6 !important;
+  border: 1px solid #2e3138 !important;
+  border-radius: 6px !important;
+  font-weight: 400 !important;
+  transition: background 0.15s !important;
+}
+
+#grasple-col-right button.d2l-button:hover,
+#grasple-col-right .d2l-button:hover {
+  background: #2a2e36 !important;
+  color: #e8ecf0 !important;
+}
+
+/* Previous/Next iterator buttons */
+#grasple-col-right .d2l-iterator-button {
+  background: #22262e !important;
+  border: 1px solid #2e3138 !important;
+  border-radius: 6px !important;
+  color: #c2c9d6 !important;
+  transition: background 0.15s !important;
+}
+
+#grasple-col-right .d2l-iterator-button:hover {
+  background: #2a2e36 !important;
+  color: #e8ecf0 !important;
+}
+
+#grasple-col-right .d2l-iterator-button-icon {
+  color: #c2c9d6 !important;
+}
+
+#grasple-col-right .d2l-iterator-button:hover .d2l-iterator-button-icon {
+  color: #e8ecf0 !important;
+}
+
+/* Fullscreen, Bookmark, and any d2l-button-icon in right col */
+#grasple-col-right d2l-button-icon button,
+#grasple-col-right .d2l-button-icon button {
+  background: #22262e !important;
+  border: 1px solid #2e3138 !important;
+  border-radius: 6px !important;
+  color: #c2c9d6 !important;
+}
+
+#grasple-col-right d2l-button-icon button:hover {
+  background: #2a2e36 !important;
+  color: #e8ecf0 !important;
+}
+
+/* Tab background in right column */
+#grasple-col-right d2l-tabs {
+  --d2l-tabs-background-color: #1a1d23 !important;
+}
+
+/* Activity Details tab panel background */
+#grasple-col-right d2l-tab-panel {
+  background: #1a1d23 !important;
+}
+
+/* The "Task: View this topic" box */
+#grasple-col-right .d2l-container-icon {
+  background-color: #1a1d23 !important;
+  color: #c2c9d6 !important;
+}
+
 /* profile section */
 
 #grasple-profile-wrap {
