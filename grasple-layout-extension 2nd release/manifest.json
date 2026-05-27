@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Brightspace Grasple Layout",
-  "version": "1.11.5",
+  "version": "1.12.0",
   "description": "Splits Brightspace Grasple content pages into 3 resizable columns: Navigation, Grasple exercise, and Activity Details.",
   "icons": {
     "16": "icon16.png",
