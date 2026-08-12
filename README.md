@@ -5,4 +5,13 @@ To install the chrome version, go to ```chrome://extensions``` and choose "Load 
 
 Here is an example of grasple inside of brightspace with and without the extension, on a vertically mounted 1440p screen.
 
-![Project Screenshot](./exampleImages/withExtensionVertical1440.png) ![Project Screenshot](./exampleImages/withoutExtensionVertical1440.png)
+<table>
+  <tr>
+    <td>
+      <img src="./exampleImages/withExtensionVertical1440.png" width="400" alt="With Extension" />
+    </td>
+    <td>
+      <img src="./exampleImages/withoutExtensionVertical1440.png" width="400" alt="Without Extension" />
+    </td>
+  </tr>
+</table>
